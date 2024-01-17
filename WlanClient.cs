@@ -26,7 +26,7 @@ using System.Text;
 
 namespace ManagedWifiMetaGeek
 {
-    public class WlanClient
+    public class WlanClient : IDisposable
     {
         #region Fields
 
@@ -113,11 +113,6 @@ namespace ManagedWifiMetaGeek
                 Wlan.WlanCloseHandle(_clientHandle, IntPtr.Zero);
                 throw;
             }
-        }
-
-        ~WlanClient()
-        {
-            Wlan.WlanCloseHandle(_clientHandle, IntPtr.Zero);
         }
 
         #endregion Constructors
@@ -235,5 +230,37 @@ namespace ManagedWifiMetaGeek
         }
 
         #endregion Private Methods
+
+        #region Dispose
+
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                // Add any future managed objects here
+            }
+
+            Wlan.WlanCloseHandle(_clientHandle, IntPtr.Zero);
+
+            _disposed = true;
+        }
+
+        ~WlanClient()
+        {
+            Wlan.WlanCloseHandle(_clientHandle, IntPtr.Zero);
+        }
+
+        #endregion Dispose
     }
 }
